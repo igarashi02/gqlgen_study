@@ -1,0 +1,31 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: gql_database
+      TZ: 'Asia/Tokyo'
+    hostname: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/data:/var/lib/mysql
+      # - ./docker/db/conf.d:/etc/mysql/conf.d
+      # - ./log/mysql:/var/log/mysql
+
+  app:
+    image: golang:latest
+    container_name: go_container
+    tty: true
+    links:
+      - mysql
+    environment:
+      - GO111MODULE=on
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/go/src/app
+    working_dir: /go/src/app
